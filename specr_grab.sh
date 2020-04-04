@@ -25,11 +25,28 @@ YONEX="YON"
 # List of Manufacturer slugs
 PAGE_LINKS=("$ASICS" "$BABOLAT" "$DONNAY" "$DUNLOP" "$FISCHER" "$GAMMA" "$HEAD" "$PRINCE" "$PRO_KENNEX" "$SLAZENGER" "$SPALDING" "$TECHNIFIBRE" "$VOLKL" "$WEED" "$WILSON" "$YONEX")
 
+DATE="$(date '+%Y-%m-%d')"
+ARCHIVE_FOLDER="archive/$DATE"
+
+# Check for an archive folder to place the download files
+if [ ! -d $ARCHIVE_FOLDER ]; then
+    #echo "mkdir -p archive/$DATE"
+    mkdir -p $ARCHIVE_FOLDER
+else
+    echo "There is already an archive for today"
+    echo "Exiting"
+    exit
+fi
+
 for LINK in ${!PAGE_LINKS[*]}
 do
     DEFAULT_FILE_NAME="viewpattern.php?mfg="
 
-    wget --output-document="specs/${PAGE_LINKS[$LINK]}.html" "$KLIPPER${PAGE_LINKS[$LINK]}"
+    #echo "$ARCHIVE_FOLDER/${PAGE_LINKS[$LINK]}.html"
+    wget --output-document="$ARCHIVE_FOLDER/${PAGE_LINKS[$LINK]}.html" "$KLIPPER${PAGE_LINKS[$LINK]}"
 done
+
+echo "Symlinking $ARCHIVE_FOLDER to specs"
+ln -s $ARCHIVE_FOLDER specs
 
 exit
